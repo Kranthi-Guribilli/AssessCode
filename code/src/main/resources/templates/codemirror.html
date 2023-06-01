@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.2/mode/clike/clike.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="question">
+    <h2><strong>QUESTION</strong></h2>
+    <span id="questionText"></span>
+  </div>
+  <div class="code-area">
+    <textarea id="code-editor"></textarea>
+    <button onclick="executeCode()">Execute</button>
+    <div id="output"></div>
+
+    <script>
+    var codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+      lineNumbers: true,
+      mode: 'text/x-java',
+      theme: 'default'
+    });
+
+    function executeCode() {
+      var code = codeEditor.getValue();
+
+      fetch('/execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ code: code })
+      })
+      .then(response => response.text())
+      .then(output => {
+        document.getElementById('output').innerText = output;
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
+  </script>
+  </div>
+</div>
+</body>
+</html>
